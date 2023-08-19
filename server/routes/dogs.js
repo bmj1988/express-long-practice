@@ -1,4 +1,5 @@
 const express = require('express');
+const foodsRouter = require('./dog-foods')
 
 // ------------------------------  SERVER DATA ------------------------------
 
@@ -87,7 +88,7 @@ const deleteDog = (req, res) => {
 // ------------------------------  ROUTER ------------------------------
 
 const dogRouter = express.Router();
-
+dogRouter.use('/:dogId/foods', validateDogId, foodsRouter)
 dogRouter.get('/', (req, res) => {
   const dogArr = getAllDogs(req, res);
   res.send(dogArr);

@@ -2,9 +2,10 @@ const dogRouter = require('./routes/dogs.js');
 
 const express = require('express');
 require('express-async-errors');
+require('dotenv').config()
 const app = express();
 
-
+console.log(process.env.NODE_ENV)
 app.use('/static', express.static('./assets'));
 app.use(express.json());
 app.use('/dogs', dogRouter);
@@ -41,7 +42,8 @@ app.use((req, res, next) => {
   next(newError);
 })
 app.use((err, req, res, next) => {
-res.status(err.status || 500).send(`${err.status} ${err.message}`);
+  console.log(err)
+  process.env.NODE_ENV !== 'production' ? res.status(err.status || 500).send(`${err.status} ${err.message} ${err.stack}`) : res.status(err.status || 500).send(`${err.status} ${err.message}`)
 })
 
 
