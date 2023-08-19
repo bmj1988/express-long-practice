@@ -1,4 +1,6 @@
-// ------------------------------  SERVER DATA ------------------------------  
+const express = require('express');
+
+// ------------------------------  SERVER DATA ------------------------------
 
 let nextDogId = 1;
 function getNewDogId() {
@@ -18,12 +20,12 @@ const dogs = [
   }
 ];
 
-// ------------------------------  MIDDLEWARES ------------------------------ 
+// ------------------------------  MIDDLEWARES ------------------------------
 
 const validateDogInfo = (req, res, next) => {
   if (!req.body || !req.body.name) {
     const err = new Error("Dog must have a name");
-    err.statusCode = 400;
+    err.status = 400;
     next(err);
   }
   next();
@@ -33,14 +35,14 @@ const validateDogId = (req, res, next) => {
   const dog = dogs.find(dog => dog.dogId == dogId);
   if (!dog) {
     const err = new Error("Couldn't find dog with that dogId")
-    err.statusCode = 404;
+    err.status = 404;
     throw err;
     // return next(err); // alternative to throwing it
   }
   next();
 }
 
-// ------------------------------  ROUTE HANDLERS ------------------------------  
+// ------------------------------  ROUTE HANDLERS ------------------------------
 
 // GET /dogs
 const getAllDogs = (req, res) => {
@@ -82,6 +84,29 @@ const deleteDog = (req, res) => {
   res.json({ message: "success" });
 };
 
-// ------------------------------  ROUTER ------------------------------  
+// ------------------------------  ROUTER ------------------------------
 
-// Your code here
+const dogRouter = express.Router();
+
+dogRouter.get('/', (req, res) => {
+  const dogArr = getAllDogs(req, res);
+  res.send(dogArr);
+});
+
+dogRouter.get('/:dogId', validateDogId, (req, res) => {
+  res.send(getDogById(req, res));
+});
+
+dogRouter.post('/', validateDogInfo, (req, res) => {
+  res.send(createDog(req, res));
+});
+
+dogRouter.put('/:dogId', validateDogInfo, (req, res) => {
+  res.send(updateDog(req, res));
+});
+
+dogRouter.delete('/:dogId', validateDogId, (req, res) => {
+  res.send(deleteDog(req, res));
+});
+
+module.exports = dogRouter;

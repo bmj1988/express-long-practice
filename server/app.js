@@ -1,3 +1,5 @@
+const dogRouter = require('./routes/dogs.js');
+
 const express = require('express');
 require('express-async-errors');
 const app = express();
@@ -5,6 +7,8 @@ const app = express();
 
 app.use('/static', express.static('./assets'));
 app.use(express.json());
+app.use('/dogs', dogRouter);
+
 const logFunc = (req, res, next) => {
   console.log(req.method, req.url)
   res.on('finish', () => {
@@ -39,5 +43,8 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
 res.status(err.status || 500).send(`${err.status} ${err.message}`);
 })
+
+
+
 const port = 5000;
 app.listen(port, () => console.log('Server is listening on port', port));
